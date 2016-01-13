@@ -1,0 +1,24 @@
+#!/bin/bash
+
+touch .wlhist
+
+history=`cat .wlhist`
+
+URL="$(yad --title="Firefox launcher" \
+       --form --field URL\::CE $history \
+       --no-buttons --width=256 --fixed --skip-taskbar)"
+	
+if [ -z "$URL" ]; then
+    exit
+fi
+
+strippedURL="${URL::-1}"
+
+search=`grep -io "$strippedURL" .wlhist`
+separator=\!
+
+if [ -z "$search" ]; then
+    echo -n "$strippedURL$separator" >> .wlhist
+fi
+
+firefox $strippedURL
